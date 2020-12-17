@@ -1,0 +1,20 @@
+import discord
+import timbot
+from discord.ext import commands
+from discord.utils import get
+
+client = commands.Bot(command_prefix='.' , case_insensitive=True)
+
+@client.event
+async def on_ready():
+  print("Ready")
+
+
+@client.command(aliases=['tim'])
+async def timbot_dialog(ctx, *, dialog_sentence):
+  # pass string of dialog_sentence into your code
+  dialog_response = timbot.timResponse(dialog_sentence)
+  # response
+  await ctx.send(dialog_response)
+
+client.run("Nzg5MTczMTg4NTQ5ODA0MTIz.X9uMzg.m9_xFlJZSxgpLHNpnkcnrh4qrvM")
