@@ -7,6 +7,7 @@ import os
 
 import nltk
 from nltk.stem import WordNetLemmatizer
+nltk.data.path.append('./nltk_data/')
 
 from tensorflow.keras.models import load_model
 
