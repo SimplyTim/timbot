@@ -1,1 +1,1 @@
-worker: python discord_connect.py
+web: python discord_connect.py
