@@ -1,1 +1,1 @@
-worker: python discord_connect.py
+worker: python3 discord_connect.py
