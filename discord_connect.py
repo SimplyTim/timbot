@@ -17,4 +17,5 @@ async def timbot_dialog(ctx, *, dialog_sentence):
   # response
   await ctx.send(dialog_response)
 
-client.run("Nzg5MTczMTg4NTQ5ODA0MTIz.X9uMzg.m9_xFlJZSxgpLHNpnkcnrh4qrvM")
+if __name__ == "__main__":
+  client.run("Nzg5MTczMTg4NTQ5ODA0MTIz.X9uMzg.m9_xFlJZSxgpLHNpnkcnrh4qrvM")
