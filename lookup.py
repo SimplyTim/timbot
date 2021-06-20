@@ -44,14 +44,8 @@ def getAnswers(phrase):
         result = soup.find('div', attrs={"class": lambda value: value and (value.startswith("vk_bk"))})
 
     if result is None: 
-        return "I don't know the answer to that. I dumb nah."
+        return "I don't really understand what you trying to tell me tbh. \nIf you want to ask me a question, make sure it ends with a question mark."
     else:
         return result.text
-
-'''
-while True:
-    question = input("")
-    print(getAnswers(question))
-'''
 
 
