@@ -7,7 +7,7 @@ client = commands.Bot(command_prefix='.' , case_insensitive=True)
 
 @client.event
 async def on_ready():
-  await client.change_presence(activity=discord.Activity(type=discord.ActivityType.streaming, name='FBI Confidential Files'))
+  await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='FBI Confidential Files'))
   print("Ready")
 
 
