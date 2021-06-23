@@ -14,7 +14,7 @@ async def on_ready():
 @client.command(aliases=['tim'])
 async def timbot_dialog(ctx, *, dialog_sentence):
   # pass string of dialog_sentence into your code
-  dialog_response = timbot.timResponse(dialog_sentence)
+  dialog_response = timbot.timResponse(dialog_sentence, ctx.author)
   # response
   await ctx.send(dialog_response)
 

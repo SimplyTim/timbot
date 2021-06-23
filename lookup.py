@@ -43,8 +43,13 @@ def getAnswers(phrase):
         #Definitions (wikipedia)
         result = soup.find('div', attrs={"class": lambda value: value and (value.startswith("vk_bk"))})
 
+#Working on lyrics currently
+#    if result is None:
+#        #Song lyrics
+#        result = soup.find('div', attrs={"class": lambda value: value and (value.startswith("Oh5wg"))})
+
     if result is None: 
-        return "I don't really understand what you trying to tell me tbh. \nIf you want to ask me a question, make sure it ends with a question mark."
+        return "I don't really understand what you trying to tell me tbh."
     else:
         return result.text
 
