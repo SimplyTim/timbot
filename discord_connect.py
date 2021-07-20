@@ -6,7 +6,7 @@ import os
 #from key import KEY
 
 client = commands.Bot(command_prefix='.' , case_insensitive=True)
-KEY = os.environ.get('KEY', None)
+DISCORDKEY = os.environ.get('KEY', None)
 
 @client.event
 async def on_ready():
@@ -22,4 +22,4 @@ async def timbot_dialog(ctx, *, dialog_sentence):
   await ctx.send(dialog_response)
 
 if __name__ == "__main__":
-  client.run(KEY)
+  client.run(DISCORDKEY)
