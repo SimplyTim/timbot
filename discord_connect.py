@@ -6,7 +6,7 @@ import os
 #from key import KEY
 
 client = commands.Bot(command_prefix='.' , case_insensitive=True)
-DBURI = os.environ.get('KEY', None)
+KEY = os.environ.get('KEY', None)
 
 @client.event
 async def on_ready():
