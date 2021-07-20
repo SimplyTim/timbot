@@ -2,8 +2,11 @@ import discord
 import timbot
 from discord.ext import commands
 from discord.utils import get
+import os
+#from key import KEY
 
 client = commands.Bot(command_prefix='.' , case_insensitive=True)
+DBURI = os.environ.get('KEY', None)
 
 @client.event
 async def on_ready():
@@ -19,4 +22,4 @@ async def timbot_dialog(ctx, *, dialog_sentence):
   await ctx.send(dialog_response)
 
 if __name__ == "__main__":
-  client.run("Nzg5MTczMTg4NTQ5ODA0MTIz.X9uMzg.m9_xFlJZSxgpLHNpnkcnrh4qrvM")
+  client.run(KEY)
