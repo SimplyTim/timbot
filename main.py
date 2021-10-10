@@ -6,6 +6,11 @@ from discord.utils import get
 import os, asyncio, time, musicbot
 #from key import KEY
 
+#opus for Heroku
+if not discord.opus.is_loaded():
+    discord.opus.load_opus('opus')
+
+
 class Queue():
   def __init__(self):
     self.q = []
