@@ -16,7 +16,7 @@ Answers to unrecognized questions will simply be met with the answer that TimBot
 
 
 TimBot is now capable to streaming music, however this feature is still in development and issues may be experienced.
-* .tim play* <YouTube URL or search phrase> to play or queue a song.
+* .tim play {YouTube URL or search phrase} to play or queue a song.
 * .tim skip to skip the current song.
 * .tim pause to pause the current song.
 * .tim resume to resume a song after pausing.
