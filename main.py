@@ -30,7 +30,7 @@ q = Queue()
 spam = True
 
 client = commands.Bot(command_prefix='.' , case_insensitive=True)
-#DISCORDKEY = os.environ.get('KEY', None)
+DISCORDKEY = os.environ.get('KEY', None)
 #CUSTOMRESPONSE1 = os.environ.get('QUINN', None)
 #CUSTOMRESPONSE2 = os.environ.get('QUINNBOT', None)
 
@@ -156,4 +156,4 @@ async def on_message(message):
 '''
 
 if __name__ == "__main__":
-  client.run(KEY)
+  client.run(DISCORDKEY)
