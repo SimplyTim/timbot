@@ -48,8 +48,9 @@ async def afterPlay(client, ctx):
   voice.stop()
   if not q.isEmpty():
     next_song = q.dequeue()
+    song_link = await musicbot.getQueryInfo(next_song[0])
     await ctx.send("Playing " + next_song[1])
-    voice.play(discord.FFmpegPCMAudio(next_song[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(client, ctx), client.loop))
+    voice.play(discord.FFmpegPCMAudio(song_link, **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(client, ctx), client.loop))
   else:
     await voice.disconnect()
 
@@ -90,7 +91,7 @@ async def timbot_dialog(ctx, *, dialog_sentence):
       voice = await voice_channel.connect()
     
     if voice.is_playing():
-      q.enqueue(song_info)
+      q.enqueue((phrase, song_info[1]))
       await ctx.send("Added " + song_info[1] + " to queue.")
     else:
       await ctx.send("Playing " + song_info[1])
