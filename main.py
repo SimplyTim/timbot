@@ -8,7 +8,7 @@ import os, asyncio, time, musicbot
 
 #opus for Heroku
 if not discord.opus.is_loaded():
-    discord.opus.load_opus('opus')
+    discord.opus.load_opus('libopus.so')
 
 
 class Queue():
