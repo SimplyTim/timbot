@@ -4,7 +4,7 @@ from musicbot import *
 from discord.ext import commands
 from discord.utils import get
 import os, asyncio, time, musicbot
-from key import KEY
+#from key import KEY
 
 class Queue():
   def __init__(self):
