@@ -126,11 +126,12 @@ async def timbot_dialog(ctx, *, dialog_sentence):
   elif dialog_sentence == 'skip':
     vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
     if vc is not None:
-      vc.stop()
-      await ctx.send("Skipping current song.")
-      asyncio.run_coroutine_threadsafe(afterPlay(client, ctx), client.loop)
-    elif not vc.is_playing():
-      await ctx.send("Nothing is playing.")
+      if not vc.is_playing():
+        await ctx.send("Nothing is playing.")
+      else:
+        vc.stop()
+        await ctx.send("Skipping current song.")
+        asyncio.run_coroutine_threadsafe(afterPlay(client, ctx), client.loop)
     else:
       await ctx.send("I am not connected to a voice channel.")
   
