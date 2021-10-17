@@ -6,7 +6,6 @@ from discord.utils import get
 import os, asyncio, time, musicbot
 #from key import KEY
 
-
 #opus for Heroku
 if not discord.opus.is_loaded():
     discord.opus.load_opus('libopus.so')
@@ -44,17 +43,6 @@ FFMPEG_OPTIONS = {
 'options': '-vn'
 }
 
-async def afterPlay(client, ctx):
-  voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-  if not q.isEmpty():
-    next_song = q.dequeue()
-    song_link = await musicbot.getQueryInfo(next_song[0])
-    await ctx.send("Playing " + next_song[1])
-    voice.play(discord.FFmpegPCMAudio(song_link, **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(client, ctx), client.loop))
-  else:
-    await voice.disconnect()
-
-
 @client.event
 async def on_ready():
   await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='FBI Confidential Files'))
@@ -73,11 +61,21 @@ async def timbot_dialog(ctx, *, dialog_sentence):
     else:
       spam = True
       await ctx.send("Spam mode on.")
-
-
-  # .tim play <song>
-  elif dialog_sentence.split()[0].lower() == 'play':
-    phrase = ' '.join(dialog_sentence.split()[1:])
+  # .tim <anything else>
+  else:
+    # pass string of dialog_sentence into your code
+    dialog_response = timbot.timResponse(dialog_sentence, ctx.author)
+    # response
+    await ctx.send(dialog_response)
+  
+@client.command(aliases=['timplay'])
+async def play(ctx, dialog_sentence):
+  # .timplay <song>
+  if dialog_sentence == "":
+    ctx.send("Please enter a phrase/URL to play a song.")
+    return
+  else:
+    phrase = dialog_sentence.lower()
     voice_client = ctx.message.author.voice
     if voice_client is None:
       await ctx.send("You must be in a voice channel to play music.")
@@ -95,62 +93,73 @@ async def timbot_dialog(ctx, *, dialog_sentence):
       await ctx.send("Added " + song_info[1] + " to queue.")
     else:
       await ctx.send("Playing " + song_info[1])
-      voice.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(client, ctx), client.loop))
+      voice.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(skip(ctx), client.loop))
 
-  # .tim kill
-  elif dialog_sentence == 'kill':
-    vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
-    if vc is not None:
-      await vc.disconnect()
-    else:
-      await ctx.send("I am not connected to a voice channel.")
-  
-
-  # .tim pause
-  elif dialog_sentence == 'pause':
-    vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
-    if vc is not None:
-      vc.pause()
-    else:
-      await ctx.send("I am not connected to a voice channel.")
-
-  # .tim resume 
-  elif dialog_sentence == 'resume':
-    vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
-    if vc is not None:
-      vc.resume()
-    else:
-      await ctx.send("I am not connected to a voice channel.")
-  
-
-  # .tim skip
-  elif dialog_sentence == 'skip':
+@client.command(aliases=['timskip'])
+async def skip(ctx):
+  # .timskip
     vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
     if vc is not None:
       if not vc.is_playing():
         await ctx.send("Nothing is playing.")
       else:
         vc.stop()
-        await ctx.send("Skipping current song.")
-        asyncio.run_coroutine_threadsafe(afterPlay(client, ctx), client.loop)
+        await ctx.send("Playing next song...")
+      asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop)
     else:
       await ctx.send("I am not connected to a voice channel.")
   
-  # .tim check
-  elif dialog_sentence == 'queue':
-    if q.isEmpty():
-      await ctx.send("The queue is empty.")
+async def afterPlay(ctx):
+  print('in play after')
+  voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+  if not q.isEmpty():
+    next_song = q.dequeue()
+    song_link = await musicbot.getQueryInfo(next_song[0])
+    if not q.isEmpty():
+      await ctx.send("Playing " + next_song[1])
+      next_song = q.dequeue()
+      voice.play(discord.FFmpegPCMAudio(song_link[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(play(ctx, next_song[0]), client.loop))
     else:
-      await ctx.send(q.check())
-
-
-  # .tim <anything else>
+      voice.play(discord.FFmpegPCMAudio(song_link[0], **FFMPEG_OPTIONS))
   else:
-    # pass string of dialog_sentence into your code
-    dialog_response = timbot.timResponse(dialog_sentence, ctx.author)
-    # response
-    await ctx.send(dialog_response)
+    await voice.disconnect()
 
+@client.command(aliases=['timkill'])
+async def kill(ctx):
+  # .timkill
+  vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
+  if vc is not None:
+    await vc.disconnect()
+  else:
+    await ctx.send("I am not connected to a voice channel.")
+
+@client.command(aliases=['timpause'])
+async def pause(ctx):
+  # .timpause
+  vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
+  if vc is not None:
+    vc.pause()
+  else:
+    await ctx.send("I am not connected to a voice channel.")
+
+@client.command(aliases=['timresume'])
+async def resume(ctx):
+  # .timresume 
+  vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
+  if vc is not None:
+    vc.resume()
+  else:
+    await ctx.send("I am not connected to a voice channel.")
+
+@client.command(aliases=['timqueue'])
+async def queue(ctx):
+  # .timcheck
+  if q.isEmpty():
+    await ctx.send("The queue is empty.")
+  else:
+    await ctx.send(q.check())
+
+  
 '''
 @client.event
 async def on_message(message):

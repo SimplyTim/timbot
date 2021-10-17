@@ -28,10 +28,3 @@ async def getQueryInfo(query):
 async def downloadAudio(result):
   with youtube_dl.YoutubeDL(ydl_opts) as ydl:
       ydl.download([result])
-
-async def cleanup():
-  try:
-    if os.path.isfile("current.webm"):
-      os.remove('current.webm')
-  except:
-    pass
