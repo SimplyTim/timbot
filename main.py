@@ -104,13 +104,14 @@ async def skip(ctx):
   if vc is not None:
     if vc.is_playing():
       vc.stop()
-      await ctx.send("Playing next song...")
       if not q.isEmpty():
+        await ctx.send("Playing next song...")
         next_song = q.dequeue() #(phrase, name)
         await ctx.send("Playing " + next_song[1])
         song_info = await musicbot.getQueryInfo(next_song[0])
         vc.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop))
       else:
+        await ctx.send("Laters dey.")
         await vc.disconnect()
   else:
     await ctx.send("I am not connected to a voice channel.")
@@ -121,13 +122,14 @@ async def afterPlay(ctx):
   if vc is not None:
     if vc.is_playing():
       vc.stop()
-      await ctx.send("Playing next song...")
       if not q.isEmpty():
+        await ctx.send("Playing next song...")
         next_song = q.dequeue() #(phrase, name)
         await ctx.send("Playing " + next_song[1])
         song_info = await musicbot.getQueryInfo(next_song[0])
         vc.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(skip(ctx), client.loop))
       else:
+        await ctx.send("Laters dey.")
         await vc.disconnect()
   else:
     await vc.disconnect()
