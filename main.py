@@ -113,7 +113,7 @@ async def afterPlay(ctx):
   print('in play after')
   voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
   if not q.isEmpty():
-    next_song = q.dequeue()
+    next_song = q.dequeue() #(phrase, name)
     song_link = await musicbot.getQueryInfo(next_song[0])
     if not q.isEmpty():
       await ctx.send("Playing " + next_song[1])
