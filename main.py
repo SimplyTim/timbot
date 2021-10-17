@@ -36,7 +36,7 @@ q = Queue()
 spam = True
 
 client = commands.Bot(command_prefix='.' , case_insensitive=True)
-#DISCORDKEY = os.environ.get('KEY', None)
+DISCORDKEY = os.environ.get('KEY', None)
 #CUSTOMRESPONSE1 = os.environ.get('QUINN', None)
 #CUSTOMRESPONSE2 = os.environ.get('QUINNBOT', None)
 
