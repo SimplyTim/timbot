@@ -8,7 +8,7 @@ import os, asyncio, time, musicbot
 
 # #opus for Heroku
 if not discord.opus.is_loaded():
-     discord.opus.load_opus('libopus.so')
+  discord.opus.load_opus('libopus.so')
 
 
 class Queue():
@@ -71,6 +71,7 @@ async def timbot_dialog(ctx, *, dialog_sentence):
 @client.command(aliases=['timplay'])
 async def play(ctx, *, dialog_sentence):
   # .timplay <song>
+  print('in play')
   if dialog_sentence == "":
     ctx.send("Please enter a phrase/URL to play a song.")
     return
@@ -98,23 +99,38 @@ async def play(ctx, *, dialog_sentence):
 @client.command(aliases=['timskip'])
 async def skip(ctx):
   # .timskip
+  print('in skip')
   vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
   if vc is not None:
     if vc.is_playing():
       vc.stop()
       await ctx.send("Playing next song...")
-    asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop)
+      if not q.isEmpty():
+        next_song = q.dequeue() #(phrase, name)
+        await ctx.send("Playing " + next_song[1])
+        song_info = await musicbot.getQueryInfo(next_song[0])
+        vc.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop))
+      else:
+        await vc.disconnect()
   else:
     await ctx.send("I am not connected to a voice channel.")
   
 async def afterPlay(ctx):
-  voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-  if not q.isEmpty():
-    next_song = q.dequeue() #(phrase, name)
-    await ctx.send("Playing " + next_song[1])
-    asyncio.run_coroutine_threadsafe(play(ctx, next_song[0]), client.loop)
+  print('in afterplay')
+  vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
+  if vc is not None:
+    if vc.is_playing():
+      vc.stop()
+      await ctx.send("Playing next song...")
+      if not q.isEmpty():
+        next_song = q.dequeue() #(phrase, name)
+        await ctx.send("Playing " + next_song[1])
+        song_info = await musicbot.getQueryInfo(next_song[0])
+        vc.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(skip(ctx), client.loop))
+      else:
+        await vc.disconnect()
   else:
-    await voice.disconnect()
+    await vc.disconnect()
 
 @client.command(aliases=['timkill'])
 async def kill(ctx):

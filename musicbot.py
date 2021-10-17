@@ -5,12 +5,12 @@ from discord.ext import commands
 from discord.utils import get
 
 ydl_opts = {
-  'format': 'bestaudio/worst',
+  'format': 'worstaudio/worst',
   'continue_dl': True,
   'noplaylist': True,
   'quiet':True,
   'source_address':'0.0.0.0',
-  'verbose':True
+  'retries':10
 }
 
 async def getQueryInfo(query):
