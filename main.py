@@ -6,6 +6,7 @@ from discord.utils import get
 import os, asyncio, time, musicbot
 #from key import KEY
 
+
 #opus for Heroku
 if not discord.opus.is_loaded():
     discord.opus.load_opus('libopus.so')
@@ -35,7 +36,7 @@ q = Queue()
 spam = True
 
 client = commands.Bot(command_prefix='.' , case_insensitive=True)
-DISCORDKEY = os.environ.get('KEY', None)
+#DISCORDKEY = os.environ.get('KEY', None)
 #CUSTOMRESPONSE1 = os.environ.get('QUINN', None)
 #CUSTOMRESPONSE2 = os.environ.get('QUINNBOT', None)
 
@@ -45,7 +46,6 @@ FFMPEG_OPTIONS = {
 
 async def afterPlay(client, ctx):
   voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-  voice.stop()
   if not q.isEmpty():
     next_song = q.dequeue()
     song_link = await musicbot.getQueryInfo(next_song[0])
