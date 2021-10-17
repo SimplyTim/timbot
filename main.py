@@ -69,7 +69,7 @@ async def timbot_dialog(ctx, *, dialog_sentence):
     await ctx.send(dialog_response)
   
 @client.command(aliases=['timplay'])
-async def play(ctx, dialog_sentence):
+async def play(ctx, *, dialog_sentence):
   # .timplay <song>
   if dialog_sentence == "":
     ctx.send("Please enter a phrase/URL to play a song.")
