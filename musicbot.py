@@ -22,7 +22,6 @@ async def getQueryInfo(query):
     video_url = info_dict.get("url", None)
     video_id = info_dict.get("id", None)
     video_title = info_dict.get('title', None)
-    print(video_url, video_title)
     return (video_url, video_title)
 
 async def downloadAudio(result):
