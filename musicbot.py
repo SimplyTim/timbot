@@ -10,6 +10,7 @@ ydl_opts = {
   'noplaylist': True,
   'quiet':True,
   'source_address':'0.0.0.0',
+  'verbose':True
 }
 
 async def getQueryInfo(query):
@@ -20,7 +21,6 @@ async def getQueryInfo(query):
   with youtube_dl.YoutubeDL(ydl_opts) as ydl:
     info_dict = ydl.extract_info(link, download=False)
     video_url = info_dict.get("url", None)
-    video_id = info_dict.get("id", None)
     video_title = info_dict.get('title', None)
     return (video_url, video_title)
 

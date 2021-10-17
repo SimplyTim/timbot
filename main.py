@@ -6,9 +6,9 @@ from discord.utils import get
 import os, asyncio, time, musicbot
 #from key import KEY
 
-#opus for Heroku
+# #opus for Heroku
 if not discord.opus.is_loaded():
-    discord.opus.load_opus('libopus.so')
+     discord.opus.load_opus('libopus.so')
 
 
 class Queue():
@@ -33,7 +33,6 @@ class Queue():
 
 q = Queue()
 spam = True
-check = None
 
 client = commands.Bot(command_prefix='.' , case_insensitive=True)
 DISCORDKEY = os.environ.get('KEY', None)
@@ -99,36 +98,22 @@ async def play(ctx, *, dialog_sentence):
 @client.command(aliases=['timskip'])
 async def skip(ctx):
   # .timskip
-  global check
   vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
   if vc is not None:
     if vc.is_playing():
       vc.stop()
       await ctx.send("Playing next song...")
-    
-    if check is not None:
-      asyncio.run_coroutine_threadsafe(play(ctx, check[0]), client.loop)
-      check = None
-    else:
-      asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop)
+    asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop)
   else:
     await ctx.send("I am not connected to a voice channel.")
   
 async def afterPlay(ctx):
-  global check
   voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
   if not q.isEmpty():
     next_song = q.dequeue() #(phrase, name)
     song_link = await musicbot.getQueryInfo(next_song[0])
-    if not q.isEmpty():
-      await ctx.send("Playing " + next_song[1])
-      next_song = q.dequeue()
-      if q.isEmpty():
-        check = next_song
-      voice.play(discord.FFmpegPCMAudio(song_link[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(play(ctx, next_song[0]), client.loop))
-    else:
-      check = None
-      voice.play(discord.FFmpegPCMAudio(song_link[0], **FFMPEG_OPTIONS))
+    await ctx.send("Playing " + next_song[1])
+    voice.play(discord.FFmpegPCMAudio(song_link[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(skip(ctx), client.loop))
   else:
     await voice.disconnect()
 
