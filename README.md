@@ -16,10 +16,11 @@ Answers to unrecognized questions will simply be met with the answer that TimBot
 
 
 TimBot is now capable to streaming music, however this feature is still in development and issues may be experienced.
-* .tim play {YouTube URL or search phrase} to play or queue a song.
-* .tim skip to skip the current song.
-* .tim pause to pause the current song.
-* .tim resume to resume a song after pausing.
-* .tim kill to remove TimBot from a voice channel.
-* .tim queue to view the queue of music.
+* .timplay {YouTube URL or search phrase} to play or queue a song.
+* .timskip to skip the current song.
+* .timpause to pause the current song.
+* .timresume to resume a song after pausing.
+* .timkill to remove TimBot from a voice channel.
+* .timqueue to view the queue of music.
 
+  *Note that unexpected bugs arise, due to connection problems.
