@@ -111,9 +111,8 @@ async def afterPlay(ctx):
   voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
   if not q.isEmpty():
     next_song = q.dequeue() #(phrase, name)
-    song_link = await musicbot.getQueryInfo(next_song[0])
     await ctx.send("Playing " + next_song[1])
-    voice.play(discord.FFmpegPCMAudio(song_link[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(skip(ctx), client.loop))
+    asyncio.run_coroutine_threadsafe(play(ctx, next_song[0]), client.loop)
   else:
     await voice.disconnect()
 
