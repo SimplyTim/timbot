@@ -5,7 +5,7 @@ from discord.ext import commands
 from discord.utils import get
 
 ydl_opts = {
-  'format': 'worstaudio/worst',
+  'format': 'bestaudio/worst',
   'continue_dl': True,
   'noplaylist': True,
   'quiet':True,
