@@ -1,5 +1,5 @@
 # timbot
-A discord bot that uses machine learning to an extent to generate responses. 
+A discord bot that can reply to simple questions, and play music!
 This bot simply scrapes Google for responses to questions, and gives the answer to certain questions.
 
 Note that certain questions may not be given an answer.
