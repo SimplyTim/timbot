@@ -114,9 +114,9 @@ async def skip(ctx):
       # song_info = await musicbot.getQueryInfo(next_song[0])
       # vc.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop))
       skipping = False
-    else:
-      await ctx.send("Laters dey.")
-      await vc.disconnect()
+    # else:
+    #   await ctx.send("Laters dey.")
+    #   await vc.disconnect()
   else:
     await ctx.send("I am not connected to a voice channel.")
   
