@@ -122,6 +122,7 @@ async def skip(ctx):
   
 async def afterPlay(ctx):
   print('in afterplay')
+  global skipping
   vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
   if vc is not None:
     if vc.is_playing():
