@@ -95,7 +95,7 @@ async def play(ctx, *, dialog_sentence):
       await ctx.send("Added " + song_info[1] + " to queue.")
     else:
       await ctx.send("Playing " + song_info[1])
-      voice.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(skip(ctx), client.loop))
+      voice.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop))
 
 @client.command(aliases=['timskip'])
 async def skip(ctx):
@@ -133,7 +133,7 @@ async def afterPlay(ctx):
       next_song = q.dequeue() #(phrase, name)
       await ctx.send("Playing " + next_song[1])
       song_info = await musicbot.getQueryInfo(next_song[0])
-      vc.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(skip(ctx), client.loop))
+      vc.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop))
       skipping = False
     else:
       await ctx.send("Laters dey.")
