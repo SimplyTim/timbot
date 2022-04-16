@@ -1,6 +1,6 @@
 discord.py==1.5.1
 requests==2.23.0
-numpy==1.19.4
+numpy>=1.21
 discord==1.0.1
 lxml>=4.6.5
 youtube-search-python==1.4.8
