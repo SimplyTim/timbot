@@ -126,12 +126,14 @@ async def afterPlay(ctx):
   if vc is not None:
     if vc.is_playing():
       vc.stop()
-    if not q.isEmpty():
+    if not q.isEmpty() and not skipping:
+      skipping = True
       await ctx.send("Playing next song...")
       next_song = q.dequeue() #(phrase, name)
       await ctx.send("Playing " + next_song[1])
       song_info = await musicbot.getQueryInfo(next_song[0])
       vc.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(skip(ctx), client.loop))
+      skipping = False
     else:
       await ctx.send("Laters dey.")
       await vc.disconnect()
