@@ -33,9 +33,10 @@ class Queue():
 
 q = Queue()
 spam = True
+skipping = False
 
 client = commands.Bot(command_prefix='.' , case_insensitive=True)
-DISCORDKEY = os.environ.get('KEY', None)
+# DISCORDKEY = os.environ.get('KEY', None)
 #CUSTOMRESPONSE1 = os.environ.get('QUINN', None)
 #CUSTOMRESPONSE2 = os.environ.get('QUINNBOT', None)
 
@@ -99,17 +100,20 @@ async def play(ctx, *, dialog_sentence):
 @client.command(aliases=['timskip'])
 async def skip(ctx):
   # .timskip
+  global skipping
   print('in skip')
   vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
   if vc is not None:
     if vc.is_playing():
       vc.stop()
-    if not q.isEmpty():
+    if not q.isEmpty() and not skipping:
       await ctx.send("Playing next song...")
+      skipping = True
       next_song = q.dequeue() #(phrase, name)
       await ctx.send("Playing " + next_song[1])
       song_info = await musicbot.getQueryInfo(next_song[0])
       vc.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop))
+      skipping = False
     else:
       await ctx.send("Laters dey.")
       await vc.disconnect()
