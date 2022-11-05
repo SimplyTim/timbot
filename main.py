@@ -37,7 +37,7 @@ skipping = False
 currently_playing = ""
 
 client = commands.Bot(command_prefix='.' , case_insensitive=True)
-#DISCORDKEY = os.environ.get('KEY', None)
+DISCORDKEY = os.environ.get('KEY', None)
 
 FFMPEG_OPTIONS = {
 'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
@@ -161,4 +161,4 @@ async def queue(ctx):
     await ctx.send(q.check())
 
 if __name__ == "__main__":
-  client.run(KEY)
+  client.run(DISCORDKEY)
