@@ -1,3 +1,4 @@
+from operator import is_
 import discord
 import timbot
 from musicbot import *
@@ -32,46 +33,26 @@ class Queue():
     return len(self.q)==0
 
 q = Queue()
-spam = True
 skipping = False
+currently_playing = ""
 
 client = commands.Bot(command_prefix='.' , case_insensitive=True)
 DISCORDKEY = os.environ.get('KEY', None)
-#CUSTOMRESPONSE1 = os.environ.get('QUINN', None)
-#CUSTOMRESPONSE2 = os.environ.get('QUINNBOT', None)
 
 FFMPEG_OPTIONS = {
-'options': '-vn'
+'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+'options': '-v 40',
 }
 
 @client.event
 async def on_ready():
   await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='FBI Confidential Files'))
   print("Ready")
-
-@client.command(aliases=['tim'])
-async def timbot_dialog(ctx, *, dialog_sentence):
-  global spam
-  print("Received: " + dialog_sentence)
-
-  # .tim togglespam
-  if ctx.message.author.id == 298625295789981697 and dialog_sentence == "togglespam":
-    if spam == True:
-      spam = False
-      await ctx.send("Spam mode off.")
-    else:
-      spam = True
-      await ctx.send("Spam mode on.")
-  # .tim <anything else>
-  else:
-    # pass string of dialog_sentence into your code
-    dialog_response = timbot.timResponse(dialog_sentence, ctx.author)
-    # response
-    await ctx.send(dialog_response)
   
 @client.command(aliases=['timplay'])
 async def play(ctx, *, dialog_sentence):
   # .timplay <song>
+  global currently_playing
   print('in play')
   if dialog_sentence == "":
     ctx.send("Please enter a phrase/URL to play a song.")
@@ -95,6 +76,7 @@ async def play(ctx, *, dialog_sentence):
       await ctx.send("Added " + song_info[1] + " to queue.")
     else:
       await ctx.send("Playing " + song_info[1])
+      currently_playing = song_info[1]
       voice.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop))
 
 @client.command(aliases=['timskip'])
@@ -104,25 +86,16 @@ async def skip(ctx):
   print('in skip')
   vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
   if vc is not None:
-    if vc.is_playing():
-      vc.stop()
+    vc.stop()
     if not q.isEmpty() and not skipping:
-      await ctx.send("Skipping...")
-      skipping = True
-      # next_song = q.dequeue() #(phrase, name)
-      # await ctx.send("Playing " + next_song[1])
-      # song_info = await musicbot.getQueryInfo(next_song[0])
-      # vc.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop))
-      skipping = False
-    # else:
-    #   await ctx.send("Laters dey.")
-    #   await vc.disconnect()
+      await ctx.send("Skipping song...")
   else:
     await ctx.send("I am not connected to a voice channel.")
   
 async def afterPlay(ctx):
   print('in afterplay')
   global skipping
+  global currently_playing
   vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
   if vc is not None:
     if vc.is_playing():
@@ -132,6 +105,7 @@ async def afterPlay(ctx):
       await ctx.send("Playing next song...")
       next_song = q.dequeue() #(phrase, name)
       await ctx.send("Playing " + next_song[1])
+      currently_playing = song_info[1]
       song_info = await musicbot.getQueryInfo(next_song[0])
       vc.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop))
       skipping = False
@@ -144,8 +118,10 @@ async def afterPlay(ctx):
 @client.command(aliases=['timkill'])
 async def kill(ctx):
   # .timkill
+  q.q = [] #empties the queue
   vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
   if vc is not None:
+    await ctx.send("Laters dey.")
     await vc.disconnect()
   else:
     await ctx.send("I am not connected to a voice channel.")
@@ -156,6 +132,7 @@ async def pause(ctx):
   vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
   if vc is not None:
     vc.pause()
+    await ctx.send("**" + currently_playing + " paused.**")
   else:
     await ctx.send("I am not connected to a voice channel.")
 
@@ -165,28 +142,23 @@ async def resume(ctx):
   vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
   if vc is not None:
     vc.resume()
+    await ctx.send("**Resuming" + currently_playing + ".**")
   else:
     await ctx.send("I am not connected to a voice channel.")
 
 @client.command(aliases=['timqueue'])
 async def queue(ctx):
   # .timcheck
+  global currently_playing
+  
+  vc = discord.utils.get(client.voice_clients, guild=ctx.guild)
+  if vc.is_playing():
+    await ctx.send("**Currently playing: " + currently_playing + ".**" )
+  
   if q.isEmpty():
     await ctx.send("The queue is empty.")
   else:
     await ctx.send(q.check())
-
-  
-'''
-@client.event
-async def on_message(message):
-  senderId = message.author.id
-  if senderId == 789166081910112266 and spam == True:
-    await message.channel.send(CUSTOMRESPONSE2)
-  elif senderId == 256984382546509824 and spam == True:
-    await message.channel.send(CUSTOMRESPONSE1)
-  await client.process_commands(message) # Needed to make other commands work since we overrided the default on_message
-'''
 
 if __name__ == "__main__":
   client.run(DISCORDKEY)
