@@ -4,11 +4,11 @@ from musicbot import *
 from discord.ext import commands
 from discord.utils import get
 import os, asyncio, time, musicbot
-#from key import KEY
+from key import KEY
 
-#opus for Heroku
-if not discord.opus.is_loaded():
-    discord.opus.load_opus('libopus.so')
+# #opus for Heroku
+# if not discord.opus.is_loaded():
+#     discord.opus.load_opus('libopus.so')
 
 class Queue():
 	def __init__(self):
@@ -35,11 +35,11 @@ skipping = False
 currently_playing = ""
 
 client = commands.Bot(command_prefix='.' , case_insensitive=True)
-DISCORDKEY = os.environ.get('KEY', None)
+#DISCORDKEY = os.environ.get('KEY', None)
 
 FFMPEG_OPTIONS = {
 'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-'options': '-vn',
+'options': '-vn'
 }
 
 @client.event
@@ -96,8 +96,7 @@ async def skip(ctx):
             vc.stop()
         if not q.isEmpty() and not skipping:
             await ctx.send("Skipping song...")
-            skipping = True
-            skipping = False
+            await afterPlay(ctx)
         else:
             await ctx.send("I am not connected to a voice channel.")
   
@@ -114,8 +113,8 @@ async def afterPlay(ctx):
 			await ctx.send("Playing next song...")
 			next_song = q.dequeue() #(phrase, name)
 			await ctx.send("Playing " + next_song[1])
-			currently_playing = song_info[1]
 			song_info = await musicbot.getQueryInfo(next_song[0])
+			currently_playing = song_info[1]
 			vc.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop))
 			skipping = False
 		else:
@@ -170,4 +169,4 @@ async def queue(ctx):
 		await ctx.send(q.check())
 
 if __name__ == "__main__":
-	client.run(DISCORDKEY)
+	client.run(KEY)
