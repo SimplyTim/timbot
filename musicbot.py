@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from youtubesearchpython.__future__ import *
-import youtube_dl, asyncio, json, discord, os, asyncio
+import yt_dlp as youtube_dl
+import asyncio, json, discord, os, asyncio
 from discord.ext import commands
 from discord.utils import get
 
