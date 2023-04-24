@@ -4,10 +4,13 @@ from musicbot import *
 from discord.ext import commands
 from discord.utils import get
 import os, asyncio, time, musicbot
+from discord import Intents
+from discord.ext import commands
+
 from key import KEY                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
-# #opus for Heroku
-# if not discord.opus.is_loaded():
+#opus for Heroku
+#if not discord.opus.is_loaded():
 #     discord.opus.load_opus('libopus.so')
 
 class Queue():
@@ -34,7 +37,12 @@ q = Queue()
 skipping = False
 currently_playing = ""
 
-client = commands.Bot(command_prefix='.' , case_insensitive=True)
+# Enable all standard intents and message content
+# (prefix commands generally require message content)
+intents = Intents.default()
+intents.message_content = True
+
+client = commands.Bot(command_prefix='.' , case_insensitive=True, intents=intents)
 #DISCORDKEY = os.environ.get('KEY', None)
 
 FFMPEG_OPTIONS = {
@@ -67,26 +75,30 @@ async def play(ctx, *, dialog_sentence):
 		ctx.send("Please enter a phrase/URL to play a song.")
 		return
 	else:
-		phrase = dialog_sentence.lower()
-		voice_client = ctx.message.author.voice
-		if voice_client is None:
-			await ctx.send("You must be in a voice channel to play music.")
-			return
-		current_channel_id = voice_client.channel.id
-		voice_channel = discord.utils.get(ctx.guild.voice_channels, id=current_channel_id)
-		voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-		song_info = await musicbot.getQueryInfo(phrase)  # song_info = (url, title)
-
-		if voice is None:
-			voice = await voice_channel.connect()
-
+		try:
+			phrase = dialog_sentence.lower()
+			voice_client = ctx.message.author.voice
+			if voice_client is None:
+				await ctx.send("You must be in a voice channel to play music.")
+				return
+			current_channel_id = voice_client.channel.id
+			voice_channel = discord.utils.get(ctx.guild.voice_channels, id=current_channel_id)
+			voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+			song_info = await musicbot.getQueryInfo(phrase)  # song_info = (url, title)
+	
+			if voice is None:
+				voice = await voice_channel.connect()
+		
+		except Exception as e:
+			print(e)
+	
 		if voice.is_playing():
 			q.enqueue((phrase, song_info[1]))
 			await ctx.send("Added " + song_info[1] + " to queue.")
 		else:
 			await ctx.send("Playing " + song_info[1])
 			currently_playing = song_info[1]
-			voice.play(discord.FFmpegPCMAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop))
+			voice.play(discord.FFmpegOpusAudio(song_info[0], **FFMPEG_OPTIONS), after=lambda e: asyncio.run_coroutine_threadsafe(afterPlay(ctx), client.loop))
 
 @client.command(aliases=['timskip'])
 async def skip(ctx):

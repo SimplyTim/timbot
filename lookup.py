@@ -1,6 +1,4 @@
 import requests
-from chatgpt_wrapper import ChatGPT
-# import nest_asyncio
 from bs4 import BeautifulSoup
 
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36'}
