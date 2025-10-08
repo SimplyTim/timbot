@@ -2,4 +2,4 @@ discord.py>=1.7.3
 requests>=2.23.0
 numpy>=1.21
 discord>=1.0.1
-google-genai>=1.29.0
+google-genai

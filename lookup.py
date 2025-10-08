@@ -1,5 +1,10 @@
 from google.genai import types
-from key import SYSTEM_INSTRUCTIONS
+
+#from key import SYSTEM_INSTRUCTIONS
+
+# For Railway deployment
+import os
+SYSTEM_INSTRUCTIONS = os.environ['SYSTEM_INSTRUCTIONS']
 
 def getAnswers(phrase, client):
     response = client.models.generate_content(
